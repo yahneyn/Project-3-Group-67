@@ -6,6 +6,11 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <limits>
+#include "Bridges.h"
+#include "DataSource.h"
+#include "data_src/City.h"
+
+using namespace bridges;
 
 using namespace std;
 
@@ -109,6 +114,36 @@ struct UIElement {
     }
 };
 
+void citiesData()
+{
+    // US Cities Dataset
+
+    // create bridges object
+    Bridges bridges (3, "jacobbowler", "884357890438");
+
+
+    // set title
+    bridges.setTitle("Accessing US City data");
+
+    DataSource ds (&bridges);
+
+    cout << "Retrieving a set of US cities" << endl;
+
+    unordered_map<string, string> city_params {
+            {"max_pop","10000"},
+            {"min_pop","0"},
+            {"state", "FL"},
+            {"limit", "5"}
+    };
+
+    vector<City>  us_cities = ds.getUSCities(city_params);
+    for (auto c : us_cities)
+        cout << "\n" << c.getCity() << "," << c.getState() << ":" <<
+             " Population: " <<  c.getPopulation()  <<
+             ", Elevation: "  <<  c.getElevation()
+             << ", Lat/Long: " << c.getLatitude() << "," << c.getLongitude();
+}
+
 int main() {
     UIElement matcher;
     int userSelect;
@@ -179,4 +214,5 @@ int main() {
 
     // Rank aspects
     matcher.rankAspects();
+
 }
