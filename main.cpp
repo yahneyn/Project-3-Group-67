@@ -3,11 +3,24 @@
 #include <string>
 #include <iomanip>
 #include <algorithm>
+#include <unordered_set>
+#include <unordered_map>
+
 using namespace std;
 
 struct UIElement {
     int populationMax, elevationMax;
     string region, timeZone, state;
+
+    string cityGraphic = {"                       .|\n"
+                          "                       | |\n"
+                          "                       |'|            ._____\n"
+                          "               ___    |  |            |.   |' .---\"|\n"
+                          "       _    .-'   '-. |  |     .--'|  ||   | _|    |\n"
+                          "    .-'|  _.|  |    ||   '-__  |   |  |    ||      |\n"
+                          "    |' | |.    |    ||       | |   |  |    ||      |\n"
+                          " ___|  '-'     '    \"\"       '-'   '-.'    '`      |____\n"
+                          "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"};
 
     vector<string> us_states = {
             "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware",
@@ -32,6 +45,7 @@ struct UIElement {
             "Preferred US region?", "Preferred time zone?", "Preferred state?"
     };
 
+    unordered_map<string, int> aspectsMap = {{"Population", 0}, {"Elevation", 0}, {"Region", 0}, {"Time Zone", 0}, {"State", 0}};
     vector<string> aspects = {"Population", "Elevation", "Region", "Time Zone", "State"};
 
     void setPopulationMax(int pop) {
@@ -50,40 +64,62 @@ struct UIElement {
         cout << "State: " << state << endl;
     }
 
+    // Validate user input
+    int validateSelection(int selection, int min, int max) {
+        while (cin.fail() || selection < min || selection > max) {
+            cin.clear(); // clear the error flag
+            cin.ignore(1000, '\n'); // discard invalid input up to 1000 characters
+            cout << "Invalid selection. Please enter a number between " << min << " and " << max << ": " << endl;
+            cin >> selection; // re-prompt for input
+        }
+        return selection;
+    }
+
     void rankAspects() {
-        vector<int> ranks(5);
         cout << "\nRank the following aspects from 1 (most important) to 5 (least important):\n";
+        unordered_set<int> rankSet;  // Unordered set to track unique ranks
+        int userInput;
+
         for (int i = 0; i < aspects.size(); i++) {
+            int currSize = rankSet.size();
             cout << i + 1 << ". " << aspects[i] << ": " << endl;
-            cin >> ranks[i];
-            cout << endl;
+            cin >> userInput;
+            rankSet.insert(userInput);
+
+            if(rankSet.size() != currSize+1){
+                while(rankSet.size() != currSize+1){
+                    cout << "Rank " << userInput << " has already been used. Please choose a different rank:" << endl;
+                    cin >> userInput;
+                    rankSet.insert(userInput);
+                }
+            }
+
+            aspectsMap[aspects[i]] = userInput;
         }
 
-        // Validate unique ranking
-        sort(ranks.begin(), ranks.end());
-        if (unique(ranks.begin(), ranks.end()) != ranks.end()) {
-            cout << "Each aspect must have a unique rank. Please try again.\n";
-            rankAspects();  // Retry if validation fails
-        } else {
-            cout << "\nYour ranking:\n";
-            for (int i = 0; i < aspects.size(); i++) {
-                cout << "  " << aspects[i] << ": Rank " << ranks[i] << endl;
-            }
+        // Display the ranking once all unique ranks are entered
+        cout << "\nYour ranking:\n";
+        for (auto aspect : aspectsMap) {
+            cout << "  " << aspect.first << ": " << aspect.second << endl;
         }
     }
+
 };
 
 int main() {
     UIElement matcher;
     int userSelect;
 
-    cout << "Welcome to Dream-City Match!\n";
+    cout << matcher.cityGraphic << endl;
+    cout << "              Welcome to Dream-City Match!\n";
+    cout << endl;
 
     // Population
     cout << matcher.questions[0] << endl;
     for (int i = 0; i < matcher.population_ranges.size(); i++)
         cout << i + 1 << ". " << matcher.population_ranges[i] << endl;
     cin >> userSelect;
+    userSelect = matcher.validateSelection(userSelect, 1, matcher.population_ranges.size());
     matcher.setPopulationMax(userSelect);
 
     // Elevation
@@ -91,6 +127,7 @@ int main() {
     for (int i = 0; i < matcher.elevations.size(); i++)
         cout << i + 1 << ". " << matcher.elevations[i] << endl;
     cin >> userSelect;
+    userSelect = matcher.validateSelection(userSelect, 1, matcher.elevations.size());
     matcher.setElevationMax(userSelect);
 
     // Region
@@ -98,6 +135,7 @@ int main() {
     for (int i = 0; i < matcher.us_regions.size(); i++)
         cout << i + 1 << ". " << matcher.us_regions[i] << endl;
     cin >> userSelect;
+    userSelect = matcher.validateSelection(userSelect, 1, matcher.us_regions.size());
     matcher.region = matcher.us_regions[userSelect - 1];
 
     // Time Zone
@@ -105,11 +143,21 @@ int main() {
     for (int i = 0; i < matcher.timeZones.size(); i++)
         cout << i + 1 << ". " << matcher.timeZones[i] << endl;
     cin >> userSelect;
+    userSelect = matcher.validateSelection(userSelect, 1, matcher.timeZones.size());
     matcher.timeZone = matcher.timeZones[userSelect - 1];
 
+    // State
+    cout << matcher.questions[4] << endl;
+    for (int i = 0; i < matcher.us_states.size(); i++) {
+        cout << setw(20) << left << to_string(i + 1) + ". " + matcher.us_states[i];
+        if ((i + 1) % 5 == 0) cout << endl;
+    }
+    cin >> userSelect;
+    userSelect = matcher.validateSelection(userSelect, 1, matcher.us_states.size());
+    matcher.state = matcher.us_states[userSelect - 1];
 
-
-
+    cout << endl;
+    matcher.printPreferences();
 
     /* Rank algorithm pseudocode
      *
@@ -125,19 +173,6 @@ int main() {
      *
      *
      */
-
-
-    // State
-    cout << matcher.questions[4] << endl;
-    for (int i = 0; i < matcher.us_states.size(); i++) {
-        cout << setw(20) << left << to_string(i + 1) + ". " + matcher.us_states[i];
-        if ((i + 1) % 5 == 0) cout << endl;
-    }
-    cin >> userSelect;
-    matcher.state = matcher.us_states[userSelect - 1];
-
-    cout << endl;
-    matcher.printPreferences();
 
     // Rank aspects
     matcher.rankAspects();
