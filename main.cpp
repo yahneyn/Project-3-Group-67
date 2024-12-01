@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <unordered_set>
 #include <unordered_map>
+#include <limits>
 
 using namespace std;
 
@@ -76,34 +77,36 @@ struct UIElement {
     }
 
     void rankAspects() {
-        cout << "\nRank the following aspects from 1 (most important) to 5 (least important):\n";
-        unordered_set<int> rankSet;  // Unordered set to track unique ranks
-        int userInput;
+        cout << "\nRank the following aspects from 1 (most important) to 5 (least important): " << endl;
+        unordered_map<string, int> aspectsMap;  // To store the aspect and its rank
+        unordered_set<int> rankSet;  // To track the unique ranks
+        string userInput;
 
         for (int i = 0; i < aspects.size(); i++) {
-            int currSize = rankSet.size();
             cout << i + 1 << ". " << aspects[i] << ": " << endl;
-            cin >> userInput;
-            rankSet.insert(userInput);
+            while (true) {
+                cin >> userInput;
 
-            if(rankSet.size() != currSize+1){
-                while(rankSet.size() != currSize+1){
-                    cout << "Rank " << userInput << " has already been used. Please choose a different rank:" << endl;
-                    cin >> userInput;
-                    rankSet.insert(userInput);
+                // Check if input is valid and an integer between 1 and 5
+                if (cin.fail() || stoi(userInput) < 1 || stoi(userInput) > 5 || userInput.size() != 1 || rankSet.find(stoi(userInput)) != rankSet.end()) {
+                    cin.clear();  // Clear the error flag
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
+                    cout << "Invalid input. Please enter a unique integer rank between 1 and 5: " << endl;
+                } else {
+                    break;  // Valid input, break the loop
                 }
             }
 
-            aspectsMap[aspects[i]] = userInput;
+            rankSet.insert(stoi(userInput));
+            aspectsMap[aspects[i]] = stoi(userInput);
         }
 
         // Display the ranking once all unique ranks are entered
         cout << "\nYour ranking:\n";
-        for (auto aspect : aspectsMap) {
+        for (const auto& aspect : aspectsMap) {
             cout << "  " << aspect.first << ": " << aspect.second << endl;
         }
     }
-
 };
 
 int main() {
