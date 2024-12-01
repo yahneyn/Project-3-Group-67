@@ -5,7 +5,7 @@ using namespace std;
 
 
 
-class UIElement{
+struct UIElement{
     int population;
     int elevation;
     string region;
@@ -44,6 +44,6 @@ int main() {
 
     // Welcome
     cout << "Welcome to Dream-City Match!" << endl;
-    cout << myMatcher.questions[questionIndex] << endl;
+    cout << myMatcher.question[questionIndex] << endl;
 
 }
