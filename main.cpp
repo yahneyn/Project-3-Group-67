@@ -46,4 +46,24 @@ int main() {
     cout << "Welcome to Dream-City Match!" << endl;
     cout << myMatcher.questions[questionIndex] << endl;
 
+
+
+
+
+    /* Rank algorithm pseudocode
+     *
+     * create unordered map idRankMap of city_id (string) -> rank (double)
+     *
+     * place all city IDs in map and initialize ranks to 0.0
+     * for each city ID in idRankMap
+         * total_rank = 0
+         * for each city attribute under city_id
+         *    if user response contains attribute
+         *        total_rank += preference_weight
+         * update rank of ID to total_rank
+     *
+     *
+     */
+
+
 }
