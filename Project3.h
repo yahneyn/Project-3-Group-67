@@ -5,7 +5,7 @@
 using namespace std;
 
 
-void weightedScoring(map<int, vector<string>> cityList, vector<string> preferences, vector<int> weights) {
+void weightedScoring(map<string, vector<int>> cityList, vector<string> preferences, vector<int> weights) {
     //weight certain aspects more than others
     map<int, vector<string>> highScore;
     for(auto iter = cityList.begin(); iter != cityList.end(); iter++) {
