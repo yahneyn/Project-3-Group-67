@@ -5,25 +5,25 @@
 using namespace std;
 
 
-string weightedScoring(map<int, vector<string>> cityList, string state) {
+void weightedScoring(map<int, vector<string>> cityList, vector<string> preferences, vector<int> weights) {
     //weight certain aspects more than others
-    pair<string, int> highScore = make_pair("name", 0);
+    map<int, vector<string>> highScore;
     for(auto iter = cityList.begin(); iter != cityList.end(); iter++) {
         int sum = 0;
         for (int i = 0; i < iter->second.size(); i++) {
-            //weight * aspect
-            if (isdigit(iter->second[i][0])) {
-                sum += stoi(iter->second[i]);
-            } else {
-                if (iter->second[i] == state) {
-                    sum++;
-                }
+            if (iter->second[i] == preferences[i]) {
+                sum += (6-weights[i]);
             }
         }
-        if (sum > highScore.second) {
-            highScore.first = iter->first;
-            highScore.second = sum;
-        }
+        highScore[sum].push_back(iter->first);
     }
-    return highScore.first;
+    auto iter = highScore.end() - 1;
+    int val = 20;
+    while(val > 0) {
+        for(int i = 0; i < iter->second.size(); i++) {
+            cout << iter->second[i] << ": " << iter->first << endl;
+            val--;
+        }
+        iter--;
+    }
 }
