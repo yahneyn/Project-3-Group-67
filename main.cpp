@@ -44,6 +44,6 @@ int main() {
 
     // Welcome
     cout << "Welcome to Dream-City Match!" << endl;
-    cout << myMatcher.question[questionIndex] << endl;
+    cout << myMatcher.questions[questionIndex] << endl;
 
 }
