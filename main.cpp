@@ -19,12 +19,12 @@ First, the user submits the importance of each preference category to them when
 considering where to live. Then, the user submits their preferences for Population,
 Elevation, Time Zone, Region, and State
 
-Approach 1 – Greedy Approach:
+Approach 1 – Greedy Weighted Approach:
         Matches are found that most closely match the user’s preferences according
         to the greedy algorithm. For example, if state is most important to the user,
         all results that are outside of their desired state will be disregarded.
 
-Approach 2 – Weighted Scoring Approach:
+Approach 2 – Non-Greedy Weighted Approach:
         In this approach, every city will be associated with a rank value.
         To start, these rank values will all be initialized to 0.0. Then, the algorithm
         will iterate through each city and determine whether its attributes match with
@@ -192,6 +192,7 @@ int main() {
 
     cout << matcher.cityGraphic << endl;
     cout << "              Welcome to Dream-City Match!\n";
+    cout << "Complete the following survey and we'll find your Dream-City!" << endl;
     cout << endl;
 
     // Population
