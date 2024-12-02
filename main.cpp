@@ -14,6 +14,24 @@ using namespace bridges;
 
 using namespace std;
 
+/*
+First, the user submits the importance of each preference category to them when
+considering where to live. Then, the user submits their preferences for Population,
+Elevation, Time Zone, Region, and State
+
+Approach 1 – Greedy Approach:
+        Matches are found that most closely match the user’s preferences according
+        to the greedy algorithm. For example, if state is most important to the user,
+        all results that are outside of their desired state will be disregarded.
+
+Approach 2 – Weighted Scoring Approach:
+        In this approach, every city will be associated with a rank value.
+        To start, these rank values will all be initialized to 0.0. Then, the algorithm
+        will iterate through each city and determine whether its attributes match with
+        the user’s preferences. If a compatible attribute is identified in a city, a
+        weighted score will be added to it’s rank value.
+*/
+
 struct UIElement {
     int populationMax, elevationMax;
     string region, timeZone, state;
@@ -63,6 +81,7 @@ struct UIElement {
     }
 
     void printPreferences() {
+        cout << "Results:" << endl;
         cout << "Population Maximum: " << populationMax << endl;
         cout << "Elevation Maximum: " << elevationMax << endl;
         cout << "Region: " << region << endl;
@@ -81,6 +100,21 @@ struct UIElement {
         return selection;
     }
 
+    bool isInteger(const std::string &str) {
+        if (str.empty()) {
+            return false;
+        }
+
+        // Check for optional leading sign
+        size_t start = 0;
+        if (str[0] == '+' || str[0] == '-') {
+            start = 1;
+        }
+
+        // Check if all remaining characters are digits
+        return std::all_of(str.begin() + start, str.end(), ::isdigit);
+    }
+
     void rankAspects() {
         cout << "\nRank the following aspects from 1 (most important) to 5 (least important): " << endl;
         unordered_map<string, int> aspectsMap;  // To store the aspect and its rank
@@ -91,15 +125,22 @@ struct UIElement {
             cout << i + 1 << ". " << aspects[i] << ": " << endl;
             while (true) {
                 cin >> userInput;
-
-                // Check if input is valid and an integer between 1 and 5
-                if (cin.fail() || stoi(userInput) < 1 || stoi(userInput) > 5 || userInput.size() != 1 || rankSet.find(stoi(userInput)) != rankSet.end()) {
+                if(isInteger(userInput)){
+                    // Check if input is valid and an integer between 1 and 5
+                    if (cin.fail() || stoi(userInput) < 1 || stoi(userInput) > 5 || userInput.size() != 1 || rankSet.find(stoi(userInput)) != rankSet.end()) {
+                        cin.clear();  // Clear the error flag
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
+                        cout << "Invalid input. Please enter a unique integer rank between 1 and 5: " << endl;
+                    } else {
+                        break;  // Valid input, break the loop
+                    }
+                }else{
                     cin.clear();  // Clear the error flag
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
                     cout << "Invalid input. Please enter a unique integer rank between 1 and 5: " << endl;
-                } else {
-                    break;  // Valid input, break the loop
                 }
+
+
             }
 
             rankSet.insert(stoi(userInput));
@@ -145,6 +186,7 @@ void citiesData()
 }
 
 int main() {
+
     UIElement matcher;
     int userSelect;
 

@@ -92,6 +92,7 @@ Project_3_Group_67_EXTERNAL_OBJECTS =
 
 Project_3_Group_67.exe: CMakeFiles/Project_3_Group_67.dir/main.cpp.obj
 Project_3_Group_67.exe: CMakeFiles/Project_3_Group_67.dir/build.make
+Project_3_Group_67.exe: C:/curl/lib/libcurl.dll.a
 Project_3_Group_67.exe: CMakeFiles/Project_3_Group_67.dir/linkLibs.rsp
 Project_3_Group_67.exe: CMakeFiles/Project_3_Group_67.dir/objects1.rsp
 Project_3_Group_67.exe: CMakeFiles/Project_3_Group_67.dir/link.txt
