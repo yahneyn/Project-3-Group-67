@@ -34,7 +34,8 @@ Approach 2 – Non-Greedy Weighted Approach:
 
 struct UIElement {
     int populationMax, elevationMax;
-    string region, timeZone, state;
+    string timeZone, state;
+    unordered_map<string, string> userResponses;
 
     string cityGraphic = {"                       .|\n"
                           "                       | |\n"
@@ -63,14 +64,14 @@ struct UIElement {
 
     vector<string> elevations = {"Below Sea Level", "0-500m", "500-1000m", "Above 1000m"};
     vector<string> timeZones = {"EST", "CST", "MST", "PST", "AST", "HAST"};
-    vector<string> us_regions = {"West", "Midwest", "Southwest", "Southeast", "Northeast"};
+    //vector<string> us_regions = {"West", "Midwest", "Southwest", "Southeast", "Northeast"};
     vector<string> questions = {
             "Preferred population size?", "Preferred elevation (in meters)?",
-            "Preferred US region?", "Preferred time zone?", "Preferred state?"
+            "Preferred time zone?", "Preferred state?"
     };
 
-    unordered_map<string, int> aspectsMap = {{"Population", 0}, {"Elevation", 0}, {"Region", 0}, {"Time Zone", 0}, {"State", 0}};
-    vector<string> aspects = {"Population", "Elevation", "Region", "Time Zone", "State"};
+    unordered_map<string, int> aspectsMap = {{"populationMax", 0}, {"elevationMax", 0}, {"timeZone", 0}, {"state", 0}};
+    vector<string> aspects = {"Population", "Elevation", "Time Zone", "State"};
 
     void setPopulationMax(int pop) {
         populationMax = pop <= 5 ? pop * 100000 : 10000000;
@@ -84,7 +85,6 @@ struct UIElement {
         cout << "Results:" << endl;
         cout << "Population Maximum: " << populationMax << endl;
         cout << "Elevation Maximum: " << elevationMax << endl;
-        cout << "Region: " << region << endl;
         cout << "Time Zone: " << timeZone << endl;
         cout << "State: " << state << endl;
     }
@@ -115,8 +115,15 @@ struct UIElement {
         return std::all_of(str.begin() + start, str.end(), ::isdigit);
     }
 
+    void loadUserResponseMap(){
+        userResponses["populationMax"] = to_string(populationMax);
+        userResponses["elevationMax"] = to_string(elevationMax);
+        userResponses["timeZone"] = timeZone;
+        userResponses["state"] = state;
+    }
+
     void rankAspects() {
-        cout << "\nRank the following aspects from 1 (most important) to 5 (least important): " << endl;
+        cout << "\nRank the following aspects from 1 (most important) to 4 (least important): " << endl;
         unordered_map<string, int> aspectsMap;  // To store the aspect and its rank
         unordered_set<int> rankSet;  // To track the unique ranks
         string userInput;
@@ -127,17 +134,17 @@ struct UIElement {
                 cin >> userInput;
                 if(isInteger(userInput)){
                     // Check if input is valid and an integer between 1 and 5
-                    if (cin.fail() || stoi(userInput) < 1 || stoi(userInput) > 5 || userInput.size() != 1 || rankSet.find(stoi(userInput)) != rankSet.end()) {
+                    if (cin.fail() || stoi(userInput) < 1 || stoi(userInput) > 4 || userInput.size() != 1 || rankSet.find(stoi(userInput)) != rankSet.end()) {
                         cin.clear();  // Clear the error flag
                         cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
-                        cout << "Invalid input. Please enter a unique integer rank between 1 and 5: " << endl;
+                        cout << "Invalid input. Please enter a unique integer rank between 1 and 4: " << endl;
                     } else {
                         break;  // Valid input, break the loop
                     }
                 }else{
                     cin.clear();  // Clear the error flag
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
-                    cout << "Invalid input. Please enter a unique integer rank between 1 and 5: " << endl;
+                    cout << "Invalid input. Please enter a unique integer rank between 1 and 4: " << endl;
                 }
 
 
@@ -211,16 +218,8 @@ int main() {
     userSelect = matcher.validateSelection(userSelect, 1, matcher.elevations.size());
     matcher.setElevationMax(userSelect);
 
-    // Region
-    cout << matcher.questions[2] << endl;
-    for (int i = 0; i < matcher.us_regions.size(); i++)
-        cout << i + 1 << ". " << matcher.us_regions[i] << endl;
-    cin >> userSelect;
-    userSelect = matcher.validateSelection(userSelect, 1, matcher.us_regions.size());
-    matcher.region = matcher.us_regions[userSelect - 1];
-
     // Time Zone
-    cout << matcher.questions[3] << endl;
+    cout << matcher.questions[2] << endl;
     for (int i = 0; i < matcher.timeZones.size(); i++)
         cout << i + 1 << ". " << matcher.timeZones[i] << endl;
     cin >> userSelect;
@@ -228,7 +227,7 @@ int main() {
     matcher.timeZone = matcher.timeZones[userSelect - 1];
 
     // State
-    cout << matcher.questions[4] << endl;
+    cout << matcher.questions[3] << endl;
     for (int i = 0; i < matcher.us_states.size(); i++) {
         cout << setw(20) << left << to_string(i + 1) + ". " + matcher.us_states[i];
         if ((i + 1) % 5 == 0) cout << endl;
@@ -257,5 +256,5 @@ int main() {
 
     // Rank aspects
     matcher.rankAspects();
-
+    matcher.loadUserResponseMap ();
 }
