@@ -35,6 +35,7 @@ Approach 2 – Non-Greedy Weighted Approach:
 struct UIElement {
     int populationMax, elevationMax;
     string timeZone, state;
+    unordered_map<string, string> userResponses;
 
     string cityGraphic = {"                       .|\n"
                           "                       | |\n"
@@ -112,6 +113,13 @@ struct UIElement {
 
         // Check if all remaining characters are digits
         return std::all_of(str.begin() + start, str.end(), ::isdigit);
+    }
+
+    void loadUserResponseMap(){
+        userResponses["populationMax"] = to_string(populationMax);
+        userResponses["elevationMax"] = to_string(elevationMax);
+        userResponses["timeZone"] = timeZone;
+        userResponses["state"] = state;
     }
 
     void rankAspects() {
@@ -250,5 +258,5 @@ int main() {
 
     // Rank aspects
     matcher.rankAspects();
-
+    matcher.loadUserResponseMap ();
 }
