@@ -161,10 +161,10 @@ public:
         }
 
         // Display the ranking once all unique ranks are entered
-        cout << "\nYour ranking:\n";
+        /*cout << "\nYour ranking:\n";
         for (const auto& aspect : temp) {
             cout << "  " << aspect.first << ": " << aspect.second << endl;
-        }
+        }*/
 
         this->aspectsMap = temp;
     }
