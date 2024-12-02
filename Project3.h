@@ -89,11 +89,11 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
             if (attribute.first == "maxPopulation" || attribute.first == "maxElevation" )
             {
                 if (stoi(userResponses[attribute.first]) >= stoi(cityAttributes[attribute.first])){
-                    totalRank += weightMap[attribute.first];
+                    totalRank += double(weightMap[attribute.first]);
                 }
             }
             else if (userResponses[attribute.first] == attribute.second)
-                totalRank += weightMap[attribute.first];
+                totalRank += double(weightMap[attribute.first]);
         }
 
         idToRank[idRankPair.first] = totalRank;
@@ -101,9 +101,9 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
 
 
 
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 50; i++)
     {
-        cout << cities[i].getCity() << " has rank " << idToRank[i] << endl;
+        cout << cities[i].getCity() << ", " << cities[i].getState() << " has rank " << idToRank[i] << endl;
     }
 
 }

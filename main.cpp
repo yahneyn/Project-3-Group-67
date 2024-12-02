@@ -32,7 +32,8 @@ Approach 2 – Non-Greedy Weighted Approach:
         weighted score will be added to it’s rank value.
 */
 
-struct UIElement {
+class UIElement {
+public:
     int populationMax, elevationMax;
     string timeZone, state;
     unordered_map<string, string> userResponses;
@@ -74,7 +75,18 @@ struct UIElement {
     vector<string> aspects = {"Population", "Elevation", "Time Zone", "State"};
 
     void setPopulationMax(int pop) {
-        populationMax = pop <= 5 ? pop * 100000 : 10000000;
+        if (pop == 1)
+            populationMax = 10000;
+        if (pop == 2)
+            populationMax = 50000;
+        if (pop == 3)
+            populationMax = 100000;
+        if (pop == 4)
+            populationMax = 500000;
+        if (pop == 5)
+            populationMax = 1000000;
+        if (pop == 6)
+            populationMax = 10000000;
     }
 
     void setElevationMax(int ele) {
@@ -124,7 +136,7 @@ struct UIElement {
 
     void rankAspects() {
         cout << "\nRank the following aspects from 1 (most important) to 4 (least important): " << endl;
-        unordered_map<string, int> aspectsMap;  // To store the aspect and its rank
+        unordered_map<string, int> temp;  // To store the aspect and its rank
         unordered_set<int> rankSet;  // To track the unique ranks
         string userInput;
 
@@ -151,14 +163,16 @@ struct UIElement {
             }
 
             rankSet.insert(stoi(userInput));
-            aspectsMap[aspects[i]] = stoi(userInput);
+            temp[aspects[i]] = stoi(userInput);
         }
 
         // Display the ranking once all unique ranks are entered
         cout << "\nYour ranking:\n";
-        for (const auto& aspect : aspectsMap) {
+        for (const auto& aspect : temp) {
             cout << "  " << aspect.first << ": " << aspect.second << endl;
         }
+
+        this->aspectsMap = temp;
     }
 };
 
@@ -188,6 +202,63 @@ unordered_map<int, City> loadCityData()
     }
 
     return idToCityMap;
+}
+
+unordered_map<string, double> preferenceWeights(unordered_map<string, int>& aspectsMap)
+{
+    unordered_map<string, double> pWeights;
+
+    for (auto e : aspectsMap)
+        pWeights[e.first] = 0.1 * (5 - e.second);
+
+    return pWeights;
+}
+
+
+void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses)
+{
+    // keys in aspectsMap: populationMax, elevationMax, timeZone, state
+    for (auto a : aspectsMap)
+    {
+        cout << a.first << a.second << endl;
+    }
+
+    unordered_map<int, double> idToRank;
+
+    for (auto idRankPair : idToRank)
+    {
+        double totalRank = 0.0;
+
+
+        unordered_map<string, string> cityAttributes = {{"maxPopulation", to_string(cities[idRankPair.first].getPopulation())},
+                                                        {"maxElevation", to_string(cities[idRankPair.first].getElevation())},
+                                                        {"timeZone", cities[idRankPair.first].getTimeZone()},
+                                                        {"state", cities[idRankPair.first].getState()}};
+
+        unordered_map<string, double> weightMap = preferenceWeights(aspectsMap);
+
+        for (auto attribute : cityAttributes)
+        {
+            if (attribute.first == "maxPopulation" || attribute.first == "maxElevation" )
+            {
+                if (stoi(userResponses[attribute.first]) >= stoi(cityAttributes[attribute.first])){
+                    totalRank += double(weightMap[attribute.first]);
+                }
+            }
+            else if (userResponses[attribute.first] == attribute.second)
+                totalRank += double(weightMap[attribute.first]);
+        }
+
+        idToRank[idRankPair.first] = totalRank;
+    }
+
+
+
+    for (int i = 0; i < 50; i++)
+    {
+        cout << cities[i].getCity() << ", " << cities[i].getState() << " has rank " << idToRank[i] << endl;
+    }
+
 }
 
 int main() {
@@ -257,4 +328,8 @@ int main() {
     // Rank aspects
     matcher.rankAspects();
     matcher.loadUserResponseMap ();
+
+
+    nonGreedyScoring(cities, matcher.aspectsMap, matcher.userResponses);
+
 }
