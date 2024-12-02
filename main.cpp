@@ -187,8 +187,6 @@ int main() {
 
     unordered_map<int, City> cities = loadCityData();
 
-    cout << cities[0].getState() << endl;
-
     UIElement matcher;
     int userSelect;
 
