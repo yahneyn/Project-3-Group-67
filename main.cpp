@@ -366,6 +366,12 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
     }
 }
 
+
+void greedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses)
+{
+    // Sort 
+}
+
 int main() {
 
     unordered_map<int, City> cities = loadCityData();
