@@ -77,6 +77,7 @@ public:
 
     unordered_map<string, int> aspectsMap = {{"populationMax", 0}, {"elevationMax", 0}, {"timeZone", 0}, {"state", 0}};
     vector<string> aspects = {"populationMax", "elevationMax", "timeZone", "state"};
+    vector<string> preetyAspects = {"Population", "Elevation", "Time Zone", "State"};
 
     void setPopulationMax(int pop) {
         if (pop == 1)
@@ -145,7 +146,7 @@ public:
         string userInput;
 
         for (int i = 0; i < aspects.size(); i++) {
-            cout << i + 1 << ". " << aspects[i] << ": " << endl;
+            cout << i + 1 << ". " << preetyAspects[i] << ": " << endl;
             while (true) {
                 cin >> userInput;
                 if(isInteger(userInput)){
