@@ -34,7 +34,7 @@ Approach 2 – Non-Greedy Weighted Approach:
 
 class UIElement {
 public:
-    int populationMax, elevationMax;
+    int populationMax, elevationMax, stateNum;
     string timeZone, state;
     unordered_map<string, string> userResponses;
 
@@ -48,9 +48,19 @@ public:
                           " ___|  '-'     '    \"\"       '-'   '-.'    '`      |____\n"
                           "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"};
 
-    vector<string> us_states = {
+    vector<string> us_states_abbreviated = {
             "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
     };
+
+    vector<string> us_state_names = {
+            "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
+            "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts",
+            "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey",
+            "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
+            "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
+            "Wisconsin", "Wyoming"
+    };
+
 
     vector<string> population_ranges = {
             "Less than 10,000", "10,000 - 50,000", "50,000 - 100,000",
@@ -92,7 +102,7 @@ public:
         cout << "Population Maximum: " << populationMax << endl;
         cout << "Elevation Maximum: " << elevationMax << endl;
         cout << "Time Zone: " << timeZone << endl;
-        cout << "State: " << state << endl;
+        cout << "State: " << us_state_names[stateNum] << endl;
     }
 
     // Validate user input
@@ -393,13 +403,14 @@ int main() {
 
     // State
     cout << matcher.questions[3] << endl;
-    for (int i = 0; i < matcher.us_states.size(); i++) {
-        cout << setw(20) << left << to_string(i + 1) + ". " + matcher.us_states[i];
+    for (int i = 0; i < matcher.us_states_abbreviated.size(); i++) {
+        cout << setw(20) << left << to_string(i + 1) + ". " + matcher.us_state_names[i];
         if ((i + 1) % 5 == 0) cout << endl;
     }
     cin >> userSelect;
-    userSelect = matcher.validateSelection(userSelect, 1, matcher.us_states.size());
-    matcher.state = matcher.us_states[userSelect - 1];
+    userSelect = matcher.validateSelection(userSelect, 1, matcher.us_states_abbreviated.size());
+    matcher.state = matcher.us_states_abbreviated[userSelect - 1];
+    matcher.stateNum = userSelect-1;
 
     cout << endl;
     matcher.printPreferences();
