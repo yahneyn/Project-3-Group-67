@@ -15,6 +15,7 @@ find_package(CURL REQUIRED)
 add_executable(Project_3_Group_67
         main.cpp
         Project3.h
+        main.cpp
 )
 
 # If CURL is found, add include directories and link libraries
