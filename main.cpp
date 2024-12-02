@@ -208,6 +208,39 @@ unordered_map<string, double> preferenceWeights(unordered_map<string, int>& aspe
     return pWeights;
 }
 
+vector<pair<int, double>> sortRanks(const unordered_map<int, double>& idToRank)
+{
+    vector<pair<int, double>> idRankVector;
+
+    idRankVector.reserve(idToRank.size());
+    for (auto e : idToRank)
+    {
+        idRankVector.push_back({e.first, e.second});
+    }
+
+    int n = idRankVector.size();
+    bool swapped;
+
+    for (int i = 0; i < n - 1; i++)
+    {
+        swapped = false;
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            if (idRankVector[j].second < idRankVector[j + 1].second)
+            {
+                auto temp = idRankVector[j];
+                idRankVector[j] = idRankVector[j + 1];
+                idRankVector[j + 1] = temp;
+                swapped = true;
+            }
+        }
+
+        if (!swapped) break;
+    }
+
+    return idRankVector;
+}
+
 
 void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses)
 {
@@ -240,40 +273,68 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
         {
             if (attribute.first == "populationMax" || attribute.first == "elevationMax" )
             {
-
-                /*
+                if (attribute.first == "populationMax")
+                {
+                    /*
                  "Less than 10,000", "10,000 - 50,000", "50,000 - 100,000",
             "100,000 - 500,000", "500,000 - 1,000,000", "More than 1,000,000"
                  */
-                if (stoi(userResponses[attribute.first]) >= stoi(cityAttributes[attribute.first])){
-                    int userTemp = stoi(userResponses[attribute.first]);
-                    int cityTemp = stoi(cityAttributes[attribute.first]);
-                    if(userTemp == 10000000){
-                        if(cityTemp > 1000000){
-                            totalRank += weightMap[attribute.first];
-                        }
-                    }else if(userTemp == 1000000){
-                        if(cityTemp > 500000){
-                            totalRank += weightMap[attribute.first];
-                        }
-                    }else if(userTemp == 500000){
-                        if(cityTemp > 100000){
-                            totalRank += weightMap[attribute.first];
-                        }
-                    }else if(userTemp == 100000){
-                        if(cityTemp > 50000){
-                            totalRank += weightMap[attribute.first];
-                        }
-                    }else if(userTemp == 50000){
-                        if(cityTemp > 100000){
-                            totalRank += weightMap[attribute.first];
-                        }
-                    }else if(userTemp == 10000){
-                        if(cityTemp > 0){
-                            totalRank += weightMap[attribute.first];
+                    if (stoi(userResponses[attribute.first]) >= stoi(cityAttributes[attribute.first])){
+                        int userTemp = stoi(userResponses[attribute.first]);
+                        int cityTemp = stoi(cityAttributes[attribute.first]);
+                        if(userTemp == 10000000){
+                            if(cityTemp > 1000000){
+                                totalRank += weightMap[attribute.first];
+                            }
+                        }else if(userTemp == 1000000){
+                            if(cityTemp > 500000){
+                                totalRank += weightMap[attribute.first];
+                            }
+                        }else if(userTemp == 500000){
+                            if(cityTemp > 100000){
+                                totalRank += weightMap[attribute.first];
+                            }
+                        }else if(userTemp == 100000){
+                            if(cityTemp > 50000){
+                                totalRank += weightMap[attribute.first];
+                            }
+                        }else if(userTemp == 50000){
+                            if(cityTemp > 10000){
+                                totalRank += weightMap[attribute.first];
+                            }
+                        }else if(userTemp == 10000){
+                            if(cityTemp > 0){
+                                totalRank += weightMap[attribute.first];
+                            }
                         }
                     }
                 }
+
+                else
+                {
+                    if (stoi(userResponses[attribute.first]) >= stoi(cityAttributes[attribute.first])){
+                        int userTemp = stoi(userResponses[attribute.first]);
+                        int cityTemp = stoi(cityAttributes[attribute.first]);
+                        if(userTemp == 7000){
+                            if(cityTemp > 1000){
+                                totalRank += weightMap[attribute.first];
+                            }
+                        }else if(userTemp == 1000){
+                            if(cityTemp > 500){
+                                totalRank += weightMap[attribute.first];
+                            }
+                        }else if(userTemp == 500){
+                            if(cityTemp > 0){
+                                totalRank += weightMap[attribute.first];
+                            }
+                        }else if(userTemp == 0){
+                            if(cityTemp > -1000){
+                                totalRank += weightMap[attribute.first];
+                            }
+                        }
+                    }
+                }
+
             }
             else if (userResponses[attribute.first] == attribute.second)
                 totalRank += weightMap[attribute.first];
@@ -282,17 +343,31 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
         idToRank[idRankPair.first] = totalRank;
     }
 
-    int numSuccesses = 0;
-    int i = 0;
-    while (numSuccesses < 50 && i != cities.size() - 1)
+
+    vector<pair<int, double>> idRankVector = sortRanks(idToRank);
+
+    for (int i = 0; i < 50; i++)
     {
-        if (idToRank[i] != 0)
-        {
-            numSuccesses++;
-            cout << cities[i].getCity() << ", " << cities[i].getState() << " has rank " << idToRank[i] << endl;
-        }
-        i++;
+        cout << cities[idRankVector[i].first].getCity() << ", " << cities[idRankVector[i].first].getState() << " has rank " << idRankVector[i].second
+        << "\n\tPopulation: " << cities[idRankVector[i].first].getPopulation()
+        << "\n\tElevation: " << cities[idRankVector[i].first].getElevation()
+        << "\n\tTime Zone: " << cities[idRankVector[i].first].getTimeZone() << endl;
     }
+
+
+
+//    // Prints 50 cities that have nonzero rank (in no particular order)
+//    int numSuccesses = 0;
+//    int i = 0;
+//    while (numSuccesses < 50 && i != cities.size() - 1)
+//    {
+//        if (idToRank[i] != 0)
+//        {
+//            numSuccesses++;
+//            cout << cities[i].getCity() << ", " << cities[i].getState() << " has rank " << idToRank[i] << endl;
+//        }
+//        i++;
+//    }
 
 //    for (int i = 0; i < 50; i++)
 //    {
