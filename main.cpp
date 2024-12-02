@@ -245,10 +245,10 @@ vector<pair<int, double>> sortRanks(const unordered_map<int, double>& idToRank)
 void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses)
 {
     // keys in aspectsMap: populationMax, elevationMax, timeZone, state
-    for (auto a : aspectsMap)
+    /*for (auto a : aspectsMap)
     {
         cout << a.first << a.second << endl;
-    }
+    }*/
 
     unordered_map<int, double> idToRank;
 
@@ -346,34 +346,13 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
 
     vector<pair<int, double>> idRankVector = sortRanks(idToRank);
 
-    for (int i = 0; i < 50; i++)
+    for (int i = 0; i < 25; i++)
     {
-        cout << cities[idRankVector[i].first].getCity() << ", " << cities[idRankVector[i].first].getState() << " has rank " << idRankVector[i].second
+        cout << cities[idRankVector[i].first].getCity() << ", " << cities[idRankVector[i].first].getState() << " is a " << 100*idRankVector[i].second << "% match."
         << "\n\tPopulation: " << cities[idRankVector[i].first].getPopulation()
         << "\n\tElevation: " << cities[idRankVector[i].first].getElevation()
         << "\n\tTime Zone: " << cities[idRankVector[i].first].getTimeZone() << endl;
     }
-
-
-
-//    // Prints 50 cities that have nonzero rank (in no particular order)
-//    int numSuccesses = 0;
-//    int i = 0;
-//    while (numSuccesses < 50 && i != cities.size() - 1)
-//    {
-//        if (idToRank[i] != 0)
-//        {
-//            numSuccesses++;
-//            cout << cities[i].getCity() << ", " << cities[i].getState() << " has rank " << idToRank[i] << endl;
-//        }
-//        i++;
-//    }
-
-//    for (int i = 0; i < 50; i++)
-//    {
-//        cout << cities[i].getCity() << ", " << cities[i].getState() << " has rank " << idToRank[i] << endl;
-//    }
-
 }
 
 int main() {
@@ -443,12 +422,6 @@ int main() {
     // Rank aspects
     matcher.rankAspects();
     matcher.loadUserResponseMap ();
-
-    for (auto e : matcher.userResponses)
-    {
-        cout << e.first << " " << e.second <<  endl;
-    }
-
 
     nonGreedyScoring(cities, matcher.aspectsMap, matcher.userResponses);
 
