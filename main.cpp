@@ -70,7 +70,7 @@ struct UIElement {
             "Preferred time zone?", "Preferred state?"
     };
 
-    unordered_map<string, int> aspectsMap = {{"Population", 0}, {"Elevation", 0}, {"Time Zone", 0}, {"State", 0}};
+    unordered_map<string, int> aspectsMap = {{"populationMax", 0}, {"elevationMax", 0}, {"timeZone", 0}, {"state", 0}};
     vector<string> aspects = {"Population", "Elevation", "Time Zone", "State"};
 
     void setPopulationMax(int pop) {
