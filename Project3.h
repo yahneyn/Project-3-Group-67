@@ -77,8 +77,8 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
         double totalRank = 0.0;
 
 
-        unordered_map<string, string> cityAttributes = {{"maxPopulation", to_string(cities[idRankPair.first].getPopulation())},
-                                                        {"maxElevation", to_string(cities[idRankPair.first].getElevation())},
+        unordered_map<string, string> cityAttributes = {{"populationMax", to_string(cities[idRankPair.first].getPopulation())},
+                                                        {"elevationMax", to_string(cities[idRankPair.first].getElevation())},
                                                         {"timeZone", cities[idRankPair.first].getTimeZone()},
                                                         {"state", cities[idRankPair.first].getState()}};
 
@@ -86,7 +86,7 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
 
         for (auto attribute : cityAttributes)
         {
-            if (attribute.first == "maxPopulation" || attribute.first == "maxElevation" )
+            if (attribute.first == "populationMax" || attribute.first == "elevationMax" )
             {
                 if (stoi(userResponses[attribute.first]) >= stoi(cityAttributes[attribute.first])){
                     totalRank += double(weightMap[attribute.first]);

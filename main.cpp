@@ -49,13 +49,7 @@ public:
                           "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"};
 
     vector<string> us_states = {
-            "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware",
-            "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
-            "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
-            "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina",
-            "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina",
-            "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
-            "Wisconsin", "Wyoming"
+            "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
     };
 
     vector<string> population_ranges = {
@@ -64,7 +58,7 @@ public:
     };
 
     vector<string> elevations = {"Below Sea Level", "0-500m", "500-1000m", "Above 1000m"};
-    vector<string> timeZones = {"EST", "CST", "MST", "PST", "AST", "HAST"};
+    vector<string> timeZones = {"America/Chicago", "America/Los_Angeles", "America/Denver", "Pacific/Honolulu", "America/Anchorage", "America/New_York"};
     //vector<string> us_regions = {"West", "Midwest", "Southwest", "Southeast", "Northeast"};
     vector<string> questions = {
             "Preferred population size?", "Preferred elevation (in meters)?",
@@ -72,7 +66,7 @@ public:
     };
 
     unordered_map<string, int> aspectsMap = {{"populationMax", 0}, {"elevationMax", 0}, {"timeZone", 0}, {"state", 0}};
-    vector<string> aspects = {"Population", "Elevation", "Time Zone", "State"};
+    vector<string> aspects = {"populationMax", "elevationMax", "timeZone", "state"};
 
     void setPopulationMax(int pop) {
         if (pop == 1)
@@ -225,13 +219,18 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
 
     unordered_map<int, double> idToRank;
 
+
+    for (auto e : cities)
+    {
+        idToRank[e.first] = 0.0;
+    }
+
     for (auto idRankPair : idToRank)
     {
         double totalRank = 0.0;
 
-
-        unordered_map<string, string> cityAttributes = {{"maxPopulation", to_string(cities[idRankPair.first].getPopulation())},
-                                                        {"maxElevation", to_string(cities[idRankPair.first].getElevation())},
+        unordered_map<string, string> cityAttributes = {{"populationMax", to_string(cities[idRankPair.first].getPopulation())},
+                                                        {"elevationMax", to_string(cities[idRankPair.first].getElevation())},
                                                         {"timeZone", cities[idRankPair.first].getTimeZone()},
                                                         {"state", cities[idRankPair.first].getState()}};
 
@@ -239,25 +238,66 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
 
         for (auto attribute : cityAttributes)
         {
-            if (attribute.first == "maxPopulation" || attribute.first == "maxElevation" )
+            if (attribute.first == "populationMax" || attribute.first == "elevationMax" )
             {
+
+                /*
+                 "Less than 10,000", "10,000 - 50,000", "50,000 - 100,000",
+            "100,000 - 500,000", "500,000 - 1,000,000", "More than 1,000,000"
+                 */
                 if (stoi(userResponses[attribute.first]) >= stoi(cityAttributes[attribute.first])){
-                    totalRank += double(weightMap[attribute.first]);
+                    int userTemp = stoi(userResponses[attribute.first]);
+                    int cityTemp = stoi(cityAttributes[attribute.first]);
+                    if(userTemp == 10000000){
+                        if(cityTemp > 1000000){
+                            totalRank += weightMap[attribute.first];
+                        }
+                    }else if(userTemp == 1000000){
+                        if(cityTemp > 500000){
+                            totalRank += weightMap[attribute.first];
+                        }
+                    }else if(userTemp == 500000){
+                        if(cityTemp > 100000){
+                            totalRank += weightMap[attribute.first];
+                        }
+                    }else if(userTemp == 100000){
+                        if(cityTemp > 50000){
+                            totalRank += weightMap[attribute.first];
+                        }
+                    }else if(userTemp == 50000){
+                        if(cityTemp > 100000){
+                            totalRank += weightMap[attribute.first];
+                        }
+                    }else if(userTemp == 10000){
+                        if(cityTemp > 0){
+                            totalRank += weightMap[attribute.first];
+                        }
+                    }
                 }
             }
             else if (userResponses[attribute.first] == attribute.second)
-                totalRank += double(weightMap[attribute.first]);
+                totalRank += weightMap[attribute.first];
         }
 
         idToRank[idRankPair.first] = totalRank;
     }
 
-
-
-    for (int i = 0; i < 50; i++)
+    int numSuccesses = 0;
+    int i = 0;
+    while (numSuccesses < 50 && i != cities.size() - 1)
     {
-        cout << cities[i].getCity() << ", " << cities[i].getState() << " has rank " << idToRank[i] << endl;
+        if (idToRank[i] != 0)
+        {
+            numSuccesses++;
+            cout << cities[i].getCity() << ", " << cities[i].getState() << " has rank " << idToRank[i] << endl;
+        }
+        i++;
     }
+
+//    for (int i = 0; i < 50; i++)
+//    {
+//        cout << cities[i].getCity() << ", " << cities[i].getState() << " has rank " << idToRank[i] << endl;
+//    }
 
 }
 
@@ -328,6 +368,11 @@ int main() {
     // Rank aspects
     matcher.rankAspects();
     matcher.loadUserResponseMap ();
+
+    for (auto e : matcher.userResponses)
+    {
+        cout << e.first << " " << e.second <<  endl;
+    }
 
 
     nonGreedyScoring(cities, matcher.aspectsMap, matcher.userResponses);
