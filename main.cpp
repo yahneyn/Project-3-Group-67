@@ -253,7 +253,7 @@ vector<pair<int, double>> sortRanks(const unordered_map<int, double>& idToRank)
 }
 
 
-void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses)
+void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses, int desiredCityCount)
 {
     // keys in aspectsMap: populationMax, elevationMax, timeZone, state
     /*for (auto a : aspectsMap)
@@ -357,7 +357,7 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
 
     vector<pair<int, double>> idRankVector = sortRanks(idToRank);
 
-    for (int i = 0; i < 25; i++)
+    for (int i = 0; i < desiredCityCount; i++)
     {
         cout << cities[idRankVector[i].first].getCity() << ", " << cities[idRankVector[i].first].getState() << " is a " << 100*idRankVector[i].second << "% match."
         << "\n\tPopulation: " << cities[idRankVector[i].first].getPopulation()
@@ -367,9 +367,81 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
 }
 
 
-void greedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses)
+void greedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses, int desiredCityCount)
 {
-    // Sort 
+
+    // Create unordered map of cities called validCities initialized to cities
+    //
+    // Order the preferences from highest importance to lowest importance
+    //
+    // For each preference in that order
+    //      For each city
+    //          If the corresponding attribute does not match the user's response
+    //              Remove that city from validCities
+    //
+    //
+    //
+    // Print out resulting cities in validCities
+
+
+    unordered_map<int, City> validCities = cities;
+
+    string orderedPreferences[4];
+    //orderedPreferences.reserve(aspectsMap.size());
+    for (auto e : aspectsMap)
+    {
+        orderedPreferences[e.second - 1] = e.first;
+    }
+
+    for (string aspect : orderedPreferences) {
+        for (auto city : cities) {
+            int elevationMaxCity;
+            if (city.second.getElevation() > 1000)
+                elevationMaxCity = 7000;
+            else if (city.second.getElevation() > 500)
+                elevationMaxCity = 1000;
+            else if (city.second.getElevation() > 0)
+                elevationMaxCity = 500;
+            else
+                elevationMaxCity = 0;
+
+
+            int populationMaxCity;
+            if (city.second.getPopulation() > 1000000)
+                populationMaxCity = 10000000;
+            else if (city.second.getPopulation() > 500000)
+                populationMaxCity = 1000000;
+            else if (city.second.getPopulation() > 100000)
+                populationMaxCity = 500000;
+            else if (city.second.getPopulation() > 50000)
+                populationMaxCity = 100000;
+            else if (city.second.getPopulation() > 10000)
+                populationMaxCity = 50000;
+            else
+                populationMaxCity = 10000;
+
+            unordered_map<string, string> cityAttributes = {{"populationMax", to_string(populationMaxCity)},
+                                {"elevationMax", to_string(elevationMaxCity)},
+                                {"timeZone", city.second.getTimeZone()},
+                                {"state", city.second.getState()}};
+
+            if (cityAttributes[aspect] != userResponses[aspect]) {
+                validCities.erase(city.first);
+            }
+        }
+    }
+
+    int i = 0;
+
+    for (auto city : validCities) {
+        if (i == desiredCityCount) break;
+
+        cout << city.second.getCity() << ", " << city.second.getState() << endl;
+
+        i++;
+    }
+
+
 }
 
 int main() {
@@ -441,6 +513,8 @@ int main() {
     matcher.rankAspects();
     matcher.loadUserResponseMap ();
 
-    nonGreedyScoring(cities, matcher.aspectsMap, matcher.userResponses);
+    //nonGreedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25);
+
+    greedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25);
 
 }
