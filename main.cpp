@@ -69,7 +69,7 @@ public:
     };
 
     vector<string> elevations = {"Below Sea Level", "0-500m", "500-1000m", "Above 1000m"};
-    map<string, vector<string>> timezoneMap = {
+    unordered_map<string, unordered_set<string>> timezoneMap = {
             {"EST", { // Eastern Standard Time
                     "America/Detroit",
                     "America/New_York",
@@ -149,7 +149,7 @@ public:
 
     unordered_map<string, int> aspectsMap = {{"populationMax", 0}, {"elevationMax", 0}, {"timeZone", 0}, {"state", 0}};
     vector<string> aspects = {"populationMax", "elevationMax", "timeZone", "state"};
-    vector<string> preetyAspects = {"Population", "Elevation", "Time Zone", "State"};
+    vector<string> prettyAspects = {"Population", "Elevation", "Time Zone", "State"};
 
     void setPopulationMax(int pop) {
         if (pop == 1)
@@ -218,7 +218,7 @@ public:
         string userInput;
 
         for (int i = 0; i < aspects.size(); i++) {
-            cout << i + 1 << ". " << preetyAspects[i] << ": " << endl;
+            cout << i + 1 << ". " << prettyAspects[i] << ": " << endl;
             while (true) {
                 cin >> userInput;
                 if(isInteger(userInput)){
