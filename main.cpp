@@ -36,6 +36,7 @@ class UIElement {
 public:
     int populationMax, elevationMax, stateNum;
     string timeZone, state;
+    vector<string> timeZoneMatches;
     unordered_map<string, string> userResponses;
 
     string cityGraphic = {"                       .|\n"
@@ -68,7 +69,78 @@ public:
     };
 
     vector<string> elevations = {"Below Sea Level", "0-500m", "500-1000m", "Above 1000m"};
-    vector<string> timeZones = {"America/Chicago", "America/Los_Angeles", "America/Denver", "Pacific/Honolulu", "America/Anchorage", "America/New_York"};
+    map<string, vector<string>> timezoneMap = {
+            {"EST", { // Eastern Standard Time
+                    "America/Detroit",
+                    "America/New_York",
+                    "America/Indiana/Indianapolis",
+                    "America/Kentucky/Louisville",
+                    "America/Kentucky/Monticello",
+                    "America/Indiana/Winamac",
+                    "America/Indiana/Marengo",
+                    "America/Indiana/Vincennes",
+                    "America/Indiana/Petersburg",
+                    "America/Indiana/Vevay"
+            }},
+            {"CST", { // Central Standard Time
+                    "America/Chicago",
+                    "America/Indiana/Tell_City",
+                    "America/Indiana/Knox",
+                    "America/Menominee",
+                    "America/North_Dakota/Center",
+                    "America/North_Dakota/New_Salem",
+                    "America/North_Dakota/Beulah"
+            }},
+            {"MST", { // Mountain Standard Time
+                    "America/Denver",
+                    "America/Boise",
+                    "America/Phoenix" // Arizona, no DST
+            }},
+            {"PST", { // Pacific Standard Time
+                    "America/Los_Angeles",
+                    "America/Sitka",
+                    "America/Juneau"
+            }},
+            {"AKST", { // Alaska Standard Time
+                    "America/Anchorage",
+                    "America/Metlakatla",
+                    "America/Nome"
+            }},
+            {"HST", { // Hawaii-Aleutian Standard Time
+                    "Pacific/Honolulu"
+            }}
+    };
+
+    vector<std::string> timeZones = {"EST", "CST", "MST", "PST", "AST", "HST"};
+    vector<std::string> timeZonesExtended = {
+            "America/Indiana/Knox",
+            "America/Menominee",
+            "America/Indiana/Tell_City",
+            "America/Indiana/Vincennes",
+            "America/North_Dakota/Center",
+            "America/Metlakatla",
+            "America/Kentucky/Monticello",
+            "America/North_Dakota/New_Salem",
+            "America/Detroit",
+            "America/Sitka",
+            "America/Denver",
+            "America/Indiana/Petersburg",
+            "America/Anchorage",
+            "America/Chicago",
+            "America/Los_Angeles",
+            "America/Kentucky/Louisville",
+            "America/Nome",
+            "America/Indiana/Winamac",
+            "America/New_York",
+            "Pacific/Honolulu",
+            "America/Indiana/Indianapolis",
+            "America/Indiana/Marengo",
+            "America/Juneau",
+            "America/Boise",
+            "America/Phoenix",
+            "America/Indiana/Vevay",
+            "America/North_Dakota/Beulah"
+    };
     //vector<string> us_regions = {"West", "Midwest", "Southwest", "Southeast", "Northeast"};
     vector<string> questions = {
             "Preferred population size?", "Preferred elevation (in meters)?",
@@ -99,7 +171,7 @@ public:
     }
 
     void printPreferences() {
-        cout << "Results:" << endl;
+        cout << "Your Preferences:" << endl;
         cout << "Population Maximum: " << populationMax << endl;
         cout << "Elevation Maximum: " << elevationMax << endl;
         cout << "Time Zone: " << timeZone << endl;
@@ -385,6 +457,15 @@ void greedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>&
 
 
     unordered_map<int, City> validCities = cities;
+    unordered_set<string> times;
+
+    for(auto element : validCities){
+        times.insert(element.second.getTimeZone());
+    }
+
+    for(auto item : times){
+        cout << item << endl;
+    }
 
     string orderedPreferences[4];
     //orderedPreferences.reserve(aspectsMap.size());
@@ -479,6 +560,7 @@ int main() {
     cin >> userSelect;
     userSelect = matcher.validateSelection(userSelect, 1, matcher.timeZones.size());
     matcher.timeZone = matcher.timeZones[userSelect - 1];
+    matcher.timeZoneMatches = matcher.timezoneMap[matcher.timeZone];
 
     // State
     cout << matcher.questions[3] << endl;
@@ -513,8 +595,10 @@ int main() {
     matcher.rankAspects();
     matcher.loadUserResponseMap ();
 
-    //nonGreedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25);
+    cout << "Non-Greedy Results:" << endl;
+    nonGreedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25);
 
+    cout << "Greedy Results:" << endl;
     greedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25);
 
 }
