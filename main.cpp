@@ -325,7 +325,7 @@ vector<pair<int, double>> sortRanks(const unordered_map<int, double>& idToRank)
 }
 
 
-void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses, int desiredCityCount)
+void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses, int desiredCityCount, UIElement& matcher)
 {
     // keys in aspectsMap: populationMax, elevationMax, timeZone, state
     /*for (auto a : aspectsMap)
@@ -419,6 +419,14 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
                 }
 
             }
+            else if (attribute.first == "timeZone") {
+                string userResponse = userResponses[attribute.first]; // will look like EST
+                string cityResponse = cityAttributes[attribute.first]; // will look like America/Chicago
+
+                if (matcher.timezoneMap[userResponse].find(cityResponse) != matcher.timezoneMap[userResponse].end()) {
+                    totalRank += weightMap[attribute.first];
+                }
+            }
             else if (userResponses[attribute.first] == attribute.second)
                 totalRank += weightMap[attribute.first];
         }
@@ -439,7 +447,7 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
 }
 
 
-void greedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses, int desiredCityCount)
+void greedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses, int desiredCityCount, UIElement& matcher)
 {
 
     // Create unordered map of cities called validCities initialized to cities
@@ -461,10 +469,6 @@ void greedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>&
 
     for(auto element : validCities){
         times.insert(element.second.getTimeZone());
-    }
-
-    for(auto item : times){
-        cout << item << endl;
     }
 
     string orderedPreferences[4];
@@ -501,9 +505,15 @@ void greedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>&
             else
                 populationMaxCity = 10000;
 
+            string tZone;
+                for (auto e : matcher.timezoneMap[userResponses["timeZone"]]) {
+                    if (e == city.second.getTimeZone());
+                        tZone = userResponses["timeZone"];
+                }
+
             unordered_map<string, string> cityAttributes = {{"populationMax", to_string(populationMaxCity)},
                                 {"elevationMax", to_string(elevationMaxCity)},
-                                {"timeZone", city.second.getTimeZone()},
+                                {"timeZone", tZone},
                                 {"state", city.second.getState()}};
 
             if (cityAttributes[aspect] != userResponses[aspect]) {
@@ -593,12 +603,14 @@ int main() {
 
     // Rank aspects
     matcher.rankAspects();
+
+
     matcher.loadUserResponseMap ();
 
     cout << "Non-Greedy Results:" << endl;
-    nonGreedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25);
+    nonGreedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25, matcher);
 
     cout << "Greedy Results:" << endl;
-    greedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25);
+    greedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25, matcher);
 
 }
