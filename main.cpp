@@ -36,7 +36,7 @@ class UIElement {
 public:
     int populationMax, elevationMax, stateNum;
     string timeZone, state;
-    vector<string> timeZoneMatches;
+    unordered_set<string> timeZoneMatches;
     unordered_map<string, string> userResponses;
 
     string cityGraphic = {"                       .|\n"
