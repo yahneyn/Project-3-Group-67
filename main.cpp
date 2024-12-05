@@ -32,9 +32,8 @@ Approach 2 – Non-Greedy Weighted Approach:
         weighted score will be added to it’s rank value.
 */
 
-class UIElement {
-public:
-    int populationMax, elevationMax, stateNum;
+struct UIElement {
+    int populationMax{}, elevationMax{}, stateNum{};
     string timeZone, state;
     unordered_set<string> timeZoneMatches;
     unordered_map<string, string> userResponses;
