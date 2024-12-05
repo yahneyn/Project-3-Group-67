@@ -47,7 +47,6 @@
 ## Add your executable
 #add_executable(Project_3_Group_67
 #        main.cpp
-#        main.cpp
 #)
 #
 ## If CURL is found, add include directories and link libraries
