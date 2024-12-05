@@ -69,7 +69,7 @@ struct UIElement {
 
     vector<string> elevations = {"Below sea level", "0m - 500m (coastal and lowland plains)", "500m - 1000m (rolling hills and plateaus)", "Above 1000m (mountainous and rugged)"};
     unordered_map<string, unordered_set<string>> timezoneMap = {
-            {"EST", { // Eastern Standard Time
+            {"EST (Eastern Standard Time)", { // Eastern Standard Time
                     "America/Detroit",
                     "America/New_York",
                     "America/Indiana/Indianapolis",
@@ -81,7 +81,7 @@ struct UIElement {
                     "America/Indiana/Petersburg",
                     "America/Indiana/Vevay"
             }},
-            {"CST", { // Central Standard Time
+            {"CST (Central Standard Time)", { // Central Standard Time
                     "America/Chicago",
                     "America/Indiana/Tell_City",
                     "America/Indiana/Knox",
@@ -90,27 +90,27 @@ struct UIElement {
                     "America/North_Dakota/New_Salem",
                     "America/North_Dakota/Beulah"
             }},
-            {"MST", { // Mountain Standard Time
+            {"MST (Mountain Standard Time)", { // Mountain Standard Time
                     "America/Denver",
                     "America/Boise",
                     "America/Phoenix" // Arizona, no DST
             }},
-            {"PST", { // Pacific Standard Time
+            {"PST (Pacific Standard Time)", { // Pacific Standard Time
                     "America/Los_Angeles",
                     "America/Sitka",
                     "America/Juneau"
             }},
-            {"AKST", { // Alaska Standard Time
+            {"AST (Alaskan Standard Time)", { // Alaska Standard Time
                     "America/Anchorage",
                     "America/Metlakatla",
                     "America/Nome"
             }},
-            {"HST", { // Hawaii-Aleutian Standard Time
+            {"HST (Hawaiian Standard Time)", { // Hawaii-Aleutian Standard Time
                     "Pacific/Honolulu"
             }}
     };
 
-    vector<std::string> timeZones = {"EST", "CST", "MST", "PST", "AST", "HST"};
+    vector<std::string> timeZones = {"EST (Eastern Standard Time)", "CST (Central Standard Time)", "MST (Mountain Standard Time)", "PST (Pacific Standard Time)", "AST (Alaskan Standard Time)", "HST (Hawaiian Standard Time)"};
 
     //vector<string> us_regions = {"West", "Midwest", "Southwest", "Southeast", "Northeast"};
     vector<string> questions = {
@@ -325,70 +325,63 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
 
         for (auto attribute : cityAttributes)
         {
-            if (attribute.first == "populationMax")
-            {
-                if (attribute.first == "populationMax")
-                {
+            if (attribute.first == "populationMax") {
                     /*
                  "Less than 10,000", "10,000 - 50,000", "50,000 - 100,000",
             "100,000 - 500,000", "500,000 - 1,000,000", "More than 1,000,000"
                  */
-                    if (stoi(userResponses["populationMax"]) >= stoi(cityAttributes["populationMax"])){
-                        int userTemp = stoi(userResponses["populationMax"]);
-                        int cityTemp = stoi(cityAttributes["populationMax"]);
-                        if(userTemp == 10000000){
-                            if(cityTemp > 1000000){
-                                totalRank += weightMap["populationMax"];
-                            }
-                        }else if(userTemp == 1000000){
-                            if(cityTemp > 500000){
-                                totalRank += weightMap["populationMax"];
-                            }
-                        }else if(userTemp == 500000){
-                            if(cityTemp > 100000){
-                                totalRank += weightMap["populationMax"];
-                            }
-                        }else if(userTemp == 100000){
-                            if(cityTemp > 50000){
-                                totalRank += weightMap["populationMax"];
-                            }
-                        }else if(userTemp == 50000){
-                            if(cityTemp > 10000){
-                                totalRank += weightMap["populationMax"];
-                            }
-                        }else if(userTemp == 10000){
-                            if(cityTemp > 0){
-                                totalRank += weightMap["populationMax"];
-                            }
+                if (stoi(userResponses["populationMax"]) >= stoi(cityAttributes["populationMax"])){
+                    int userTemp = stoi(userResponses["populationMax"]);
+                    int cityTemp = stoi(cityAttributes["populationMax"]);
+                    if(userTemp == 10000000){
+                        if(cityTemp > 1000000){
+                            totalRank += weightMap["populationMax"];
+                        }
+                    }else if(userTemp == 1000000){
+                        if(cityTemp > 500000){
+                            totalRank += weightMap["populationMax"];
+                        }
+                    }else if(userTemp == 500000){
+                        if(cityTemp > 100000){
+                            totalRank += weightMap["populationMax"];
+                        }
+                    }else if(userTemp == 100000){
+                        if(cityTemp > 50000){
+                            totalRank += weightMap["populationMax"];
+                        }
+                    }else if(userTemp == 50000){
+                        if(cityTemp > 10000){
+                            totalRank += weightMap["populationMax"];
+                        }
+                    }else if(userTemp == 10000){
+                        if(cityTemp > 0){
+                            totalRank += weightMap["populationMax"];
                         }
                     }
                 }
-
-                else if (attribute.first == "elevationMax")
-                {
-                    if (stoi(userResponses[attribute.first]) >= stoi(cityAttributes[attribute.first])){
-                        int userTemp = stoi(userResponses[attribute.first]);
-                        int cityTemp = stoi(cityAttributes[attribute.first]);
-                        if(userTemp == 7000){
-                            if(cityTemp > 1000){
-                                totalRank += weightMap[attribute.first];
-                            }
-                        }else if(userTemp == 1000){
-                            if(cityTemp > 500){
-                                totalRank += weightMap[attribute.first];
-                            }
-                        }else if(userTemp == 500){
-                            if(cityTemp > 0){
-                                totalRank += weightMap[attribute.first];
-                            }
-                        }else if(userTemp == 0){
-                            if(cityTemp > -1000){
-                                totalRank += weightMap[attribute.first];
-                            }
+            }
+            else if (attribute.first == "elevationMax") {
+                if (stoi(userResponses[attribute.first]) >= stoi(cityAttributes[attribute.first])){
+                    int userTemp = stoi(userResponses[attribute.first]);
+                    int cityTemp = stoi(cityAttributes[attribute.first]);
+                    if(userTemp == 7000){
+                        if(cityTemp > 1000){
+                            totalRank += weightMap[attribute.first];
+                        }
+                    }else if(userTemp == 1000){
+                        if(cityTemp > 500){
+                            totalRank += weightMap[attribute.first];
+                        }
+                    }else if(userTemp == 500){
+                        if(cityTemp > 0){
+                            totalRank += weightMap[attribute.first];
+                        }
+                    }else if(userTemp == 0){
+                        if(cityTemp > -1000){
+                            totalRank += weightMap[attribute.first];
                         }
                     }
                 }
-
             }
             else if (attribute.first == "timeZone") {
                 string userResponse = userResponses[attribute.first]; // will look like EST
@@ -398,8 +391,9 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
                     totalRank += weightMap[attribute.first];
                 }
             }
-            else if (attribute.first == "state")
+            else if (userResponses[attribute.first] == attribute.second) {
                 totalRank += weightMap[attribute.first];
+            }
         }
 
         idToRank[idRankPair.first] = totalRank;
@@ -411,8 +405,8 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
     for (int i = 0; i < desiredCityCount; i++)
     {
         cout << cities[idRankVector[i].first].getCity() << ", " << cities[idRankVector[i].first].getState() << " is a " << 100*idRankVector[i].second << "% match."
-        << "\n\tPopulation: " << cities[idRankVector[i].first].getPopulation()
-        << "\n\tElevation: " << cities[idRankVector[i].first].getElevation()
+        << "\n\tPopulation: " << fixed << setprecision(0) << cities[idRankVector[i].first].getPopulation()
+        << "\n\tElevation: " << fixed << setprecision(0) << cities[idRankVector[i].first].getElevation() << "m"
         << "\n\tTime Zone: " << cities[idRankVector[i].first].getTimeZone() << endl;
     }
 }
@@ -478,7 +472,7 @@ void greedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>&
 
             string tZone;
                 for (auto e : matcher.timezoneMap[userResponses["timeZone"]]) {
-                    if (e == city.second.getTimeZone());
+                    if (e == city.second.getTimeZone())
                         tZone = userResponses["timeZone"];
                 }
 
@@ -498,12 +492,15 @@ void greedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>&
     for (auto city : validCities) {
         if (i == desiredCityCount) break;
 
-        cout << city.second.getCity() << ", " << city.second.getState() << endl;
+        cout << city.second.getCity() << ", " << city.second.getState() << " is a match."
+        << "\n\tPopulation: " << fixed << setprecision(0) << city.second.getPopulation()
+        << "\n\tElevation: " << fixed << setprecision(0) << city.second.getElevation() << "m"
+        << "\n\tTime Zone: " << city.second.getTimeZone() << endl;
 
         i++;
     }
 
-    if (validCities.size() == 0){
+    if (validCities.empty()){
         cout << "No such cities were found." << endl;
     }
 
@@ -519,7 +516,7 @@ int main() {
 
     cout << matcher.cityGraphic << endl;
     cout << "              Welcome to Dream-City Match!\n";
-    cout << "Complete the following survey and we'll find your Dream-City!" << endl;
+    cout << "Complete the following survey and we'll find your dream city!" << endl;
     cout << endl;
 
     // Population
@@ -586,30 +583,30 @@ int main() {
 
     matcher.loadUserResponseMap();
 
-    cout << "Select the algorithm you would like to execute, or select to exit." << endl;
+    cout << "\nSelect the algorithm you would like to execute, or select to exit." << endl;
     cout << "1. Greedy algorithm" << endl;
-    cout << "2. Non-Greedy algorithm" << endl;
+    cout << "2. Non-greedy algorithm" << endl;
     cout << "3. Exit" << endl;
     cin >> userSelect;
     userSelect = matcher.validateSelection(userSelect, 1, 3);
 
     while (userSelect != 3){
         if (userSelect == 1){
-            cout << "Greedy Results:" << endl;
+            cout << "\nGreedy Algorithm Results:" << endl;
             greedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25, matcher);
         }else{
-            cout << "Non-Greedy Results:" << endl;
+            cout << "\nNon-Greedy Algorithm Results:" << endl;
             nonGreedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25, matcher);
         }
-        cout << "Select the algorithm you would like to execute, or select to exit." << endl;
+        cout << "\nSelect the algorithm you would like to execute, or select to exit." << endl;
         cout << "1. Greedy algorithm" << endl;
-        cout << "2. Non-Greedy algorithm" << endl;
+        cout << "2. Non-greedy algorithm" << endl;
         cout << "3. Exit" << endl;
         cin >> userSelect;
         userSelect = matcher.validateSelection(userSelect, 1, 3);
 
     }
 
-    cout << "Thank you for using Dream-City Match! Goodbye!" << endl;
+    cout << "\nThank you for using Dream-City Match! Goodbye!" << endl;
 
 }
