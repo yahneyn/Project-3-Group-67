@@ -63,11 +63,11 @@ struct UIElement {
 
 
     vector<string> population_ranges = {
-            "Less than 10,000", "10,000 - 50,000", "50,000 - 100,000",
-            "100,000 - 500,000", "500,000 - 1,000,000", "More than 1,000,000"
+            "Less than 10,000 (small-town feel)", "10,000 - 50,000 (moderately bustling)", "50,000 - 100,000 (thriving but manageable)",
+            "100,000 - 500,000 (lively midsize city)", "500,000 - 1,000,000 (dynamic and diverse)", "More than 1,000,000 (global and fast-paced)"
     };
 
-    vector<string> elevations = {"Below Sea Level", "0-500m", "500-1000m", "Above 1000m"};
+    vector<string> elevations = {"Below sea level", "0m - 500m (coastal and lowland plains)", "500m - 1000m (rolling hills and plateaus)", "Above 1000m (mountainous and rugged)"};
     unordered_map<string, unordered_set<string>> timezoneMap = {
             {"EST", { // Eastern Standard Time
                     "America/Detroit",
@@ -114,13 +114,13 @@ struct UIElement {
 
     //vector<string> us_regions = {"West", "Midwest", "Southwest", "Southeast", "Northeast"};
     vector<string> questions = {
-            "Preferred population size?", "Preferred elevation (in meters)?",
-            "Preferred time zone?", "Preferred state?"
+            "Preferred population size?", "\nPreferred elevation (in meters)?",
+            "\nPreferred time zone?", "\nPreferred state?"
     };
 
-    unordered_map<string, int> aspectsMap = {{"populationMax", 0}, {"elevationMax", 0}, {"timeZone", 0}, {"state", 0}};
+    unordered_map<string, int> aspectsMap = {{"populationMax", 0}, {"elevationMax", 0}, {"timeZone", 0}, {"state", 0}}; // map of aspects and their ranks set by the user
     vector<string> aspects = {"populationMax", "elevationMax", "timeZone", "state"};
-    vector<string> prettyAspects = {"Population", "Elevation", "Time Zone", "State"};
+    vector<string> prettyAspects = {"Population", "Elevation", "Time Zone", "State"};   // used for printing
 
     void setPopulationMax(int pop) {
         if (pop == 1)
@@ -141,10 +141,10 @@ struct UIElement {
         elevationMax = ele == 1 ? 0 : ele == 2 ? 500 : ele == 3 ? 1000 : 7000;
     }
 
-    void printPreferences() {
+    void printPreferences(int pop, int ele) {
         cout << "Your Preferences:" << endl;
-        cout << "Population Maximum: " << populationMax << endl;
-        cout << "Elevation Maximum: " << elevationMax << endl;
+        cout << "Population Range: " << population_ranges[pop - 1] << endl;
+        cout << "Elevation Range: " << elevations[ele - 1] << endl;
         cout << "Time Zone: " << timeZone << endl;
         cout << "State: " << us_state_names[stateNum] << endl;
     }
@@ -530,6 +530,8 @@ int main() {
     userSelect = matcher.validateSelection(userSelect, 1, matcher.population_ranges.size());
     matcher.setPopulationMax(userSelect);
 
+    int popChoice = userSelect;
+
     // Elevation
     cout << matcher.questions[1] << endl;
     for (int i = 0; i < matcher.elevations.size(); i++)
@@ -537,6 +539,8 @@ int main() {
     cin >> userSelect;
     userSelect = matcher.validateSelection(userSelect, 1, matcher.elevations.size());
     matcher.setElevationMax(userSelect);
+
+    int elevChoice = userSelect;
 
     // Time Zone
     cout << matcher.questions[2] << endl;
@@ -559,7 +563,7 @@ int main() {
     matcher.stateNum = userSelect-1;
 
     cout << endl;
-    matcher.printPreferences();
+    matcher.printPreferences(popChoice, elevChoice);
 
     /* Rank algorithm pseudocode
      *
@@ -580,7 +584,7 @@ int main() {
     matcher.rankAspects();
 
 
-    matcher.loadUserResponseMap ();
+    matcher.loadUserResponseMap();
 
     cout << "Select the algorithm you would like to execute, or select to exit." << endl;
     cout << "1. Greedy algorithm" << endl;
