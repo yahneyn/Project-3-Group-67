@@ -112,35 +112,7 @@ public:
     };
 
     vector<std::string> timeZones = {"EST", "CST", "MST", "PST", "AST", "HST"};
-    vector<std::string> timeZonesExtended = {
-            "America/Indiana/Knox",
-            "America/Menominee",
-            "America/Indiana/Tell_City",
-            "America/Indiana/Vincennes",
-            "America/North_Dakota/Center",
-            "America/Metlakatla",
-            "America/Kentucky/Monticello",
-            "America/North_Dakota/New_Salem",
-            "America/Detroit",
-            "America/Sitka",
-            "America/Denver",
-            "America/Indiana/Petersburg",
-            "America/Anchorage",
-            "America/Chicago",
-            "America/Los_Angeles",
-            "America/Kentucky/Louisville",
-            "America/Nome",
-            "America/Indiana/Winamac",
-            "America/New_York",
-            "Pacific/Honolulu",
-            "America/Indiana/Indianapolis",
-            "America/Indiana/Marengo",
-            "America/Juneau",
-            "America/Boise",
-            "America/Phoenix",
-            "America/Indiana/Vevay",
-            "America/North_Dakota/Beulah"
-    };
+
     //vector<string> us_regions = {"West", "Midwest", "Southwest", "Southeast", "Northeast"};
     vector<string> questions = {
             "Preferred population size?", "Preferred elevation (in meters)?",
@@ -354,7 +326,7 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
 
         for (auto attribute : cityAttributes)
         {
-            if (attribute.first == "populationMax" || attribute.first == "elevationMax" )
+            if (attribute.first == "populationMax")
             {
                 if (attribute.first == "populationMax")
                 {
@@ -362,38 +334,38 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
                  "Less than 10,000", "10,000 - 50,000", "50,000 - 100,000",
             "100,000 - 500,000", "500,000 - 1,000,000", "More than 1,000,000"
                  */
-                    if (stoi(userResponses[attribute.first]) >= stoi(cityAttributes[attribute.first])){
-                        int userTemp = stoi(userResponses[attribute.first]);
-                        int cityTemp = stoi(cityAttributes[attribute.first]);
+                    if (stoi(userResponses["populationMax"]) >= stoi(cityAttributes["populationMax"])){
+                        int userTemp = stoi(userResponses["populationMax"]);
+                        int cityTemp = stoi(cityAttributes["populationMax"]);
                         if(userTemp == 10000000){
                             if(cityTemp > 1000000){
-                                totalRank += weightMap[attribute.first];
+                                totalRank += weightMap["populationMax"];
                             }
                         }else if(userTemp == 1000000){
                             if(cityTemp > 500000){
-                                totalRank += weightMap[attribute.first];
+                                totalRank += weightMap["populationMax"];
                             }
                         }else if(userTemp == 500000){
                             if(cityTemp > 100000){
-                                totalRank += weightMap[attribute.first];
+                                totalRank += weightMap["populationMax"];
                             }
                         }else if(userTemp == 100000){
                             if(cityTemp > 50000){
-                                totalRank += weightMap[attribute.first];
+                                totalRank += weightMap["populationMax"];
                             }
                         }else if(userTemp == 50000){
                             if(cityTemp > 10000){
-                                totalRank += weightMap[attribute.first];
+                                totalRank += weightMap["populationMax"];
                             }
                         }else if(userTemp == 10000){
                             if(cityTemp > 0){
-                                totalRank += weightMap[attribute.first];
+                                totalRank += weightMap["populationMax"];
                             }
                         }
                     }
                 }
 
-                else
+                else if (attribute.first == "elevationMax")
                 {
                     if (stoi(userResponses[attribute.first]) >= stoi(cityAttributes[attribute.first])){
                         int userTemp = stoi(userResponses[attribute.first]);
@@ -427,7 +399,7 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
                     totalRank += weightMap[attribute.first];
                 }
             }
-            else if (userResponses[attribute.first] == attribute.second)
+            else if (attribute.first == "state")
                 totalRank += weightMap[attribute.first];
         }
 
