@@ -22,5 +22,10 @@ After downloading, ensure that you list the folder containing the executable in 
 After you have installed cURL using the instructions above, navigate to the **CMakeLists.txt** file and uncomment the **second** section of code
 (look at the comments in the file for more instructions).
 
-<h2> Step 2: Run the Program </h2>
+<h2> Step 2: Unzip the bridges.zip Folder</h2>
+
+Ensure that you unzip the **bridges.zip** folder and place it in the same directory as your **CMakeLists.txt** file.
+
+
+<h2> Step 3: Run the Program </h2>
 That's it! After properly installing cURL, you can run the program in your IDE of choice.
