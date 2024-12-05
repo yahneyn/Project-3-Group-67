@@ -503,6 +503,10 @@ void greedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>&
         i++;
     }
 
+    if (validCities.size() == 0){
+        cout << "No such cities were found." << endl;
+    }
+
 
 }
 
@@ -578,10 +582,29 @@ int main() {
 
     matcher.loadUserResponseMap ();
 
-    cout << "Non-Greedy Results:" << endl;
-    nonGreedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25, matcher);
+    cout << "Select the algorithm you would like to execute, or select to exit." << endl;
+    cout << "1. Greedy algorithm" << endl;
+    cout << "2. Non-Greedy algorithm" << endl;
+    cout << "3. Exit" << endl;
+    cin >> userSelect;
+    userSelect = matcher.validateSelection(userSelect, 1, 3);
 
-    cout << "Greedy Results:" << endl;
-    greedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25, matcher);
+    while (userSelect != 3){
+        if (userSelect == 1){
+            cout << "Greedy Results:" << endl;
+            greedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25, matcher);
+        }else{
+            cout << "Non-Greedy Results:" << endl;
+            nonGreedyScoring(cities, matcher.aspectsMap, matcher.userResponses, 25, matcher);
+        }
+        cout << "Select the algorithm you would like to execute, or select to exit." << endl;
+        cout << "1. Greedy algorithm" << endl;
+        cout << "2. Non-Greedy algorithm" << endl;
+        cout << "3. Exit" << endl;
+        cin >> userSelect;
+        userSelect = matcher.validateSelection(userSelect, 1, 3);
+    }
+
+    cout << "Thank you for using Dream-City Match! Goodbye!" << endl;
 
 }
