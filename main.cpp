@@ -33,7 +33,7 @@ Approach 2 – Non-Greedy Weighted Approach:
 */
 
 struct UIElement {
-    int populationMax{}, elevationMax{}, stateNum{};
+    int populationMax, elevationMax, stateNum;
     string timeZone, state;
     unordered_set<string> timeZoneMatches;
     unordered_map<string, string> userResponses;
