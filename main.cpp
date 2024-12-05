@@ -33,6 +33,7 @@ Approach 2 – Non-Greedy Weighted Approach:
 */
 
 struct UIElement {
+//storing initial vaues and outputting layout 
     int populationMax, elevationMax, stateNum;
     string timeZone, state;
     unordered_set<string> timeZoneMatches;
@@ -117,7 +118,7 @@ struct UIElement {
             "Preferred population size?", "\nPreferred elevation (in meters)?",
             "\nPreferred time zone?", "\nPreferred state?"
     };
-
+// convert population ranges to only the maximum of the range
     unordered_map<string, int> aspectsMap = {{"populationMax", 0}, {"elevationMax", 0}, {"timeZone", 0}, {"state", 0}}; // map of aspects and their ranks set by the user
     vector<string> aspects = {"populationMax", "elevationMax", "timeZone", "state"};
     vector<string> prettyAspects = {"Population", "Elevation", "Time Zone", "State"};   // used for printing
@@ -174,7 +175,7 @@ struct UIElement {
         // Check if all remaining characters are digits
         return std::all_of(str.begin() + start, str.end(), ::isdigit);
     }
-
+//puts user reponses in map
     void loadUserResponseMap(){
         userResponses["populationMax"] = to_string(populationMax);
         userResponses["elevationMax"] = to_string(elevationMax);
@@ -187,13 +188,13 @@ struct UIElement {
         unordered_map<string, int> temp;  // To store the aspect and its rank
         unordered_set<int> rankSet;  // To track the unique ranks
         string userInput;
-
+// takes user input as a weighting or ranking for each city attribute
         for (int i = 0; i < aspects.size(); i++) {
             cout << i + 1 << ". " << prettyAspects[i] << ": " << endl;
             while (true) {
                 cin >> userInput;
                 if(isInteger(userInput)){
-                    // Check if input is valid and an integer between 1 and 5
+                    // Check if input is valid and an integer between 1 and 4
                     if (cin.fail() || stoi(userInput) < 1 || stoi(userInput) > 4 || userInput.size() != 1 || rankSet.find(stoi(userInput)) != rankSet.end()) {
                         cin.clear();  // Clear the error flag
                         cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
@@ -213,12 +214,6 @@ struct UIElement {
             rankSet.insert(stoi(userInput));
             temp[aspects[i]] = stoi(userInput);
         }
-
-        // Display the ranking once all unique ranks are entered
-        /*cout << "\nYour ranking:\n";
-        for (const auto& aspect : temp) {
-            cout << "  " << aspect.first << ": " << aspect.second << endl;
-        }*/
 
         this->aspectsMap = temp;
     }
@@ -299,10 +294,6 @@ vector<pair<int, double>> sortRanks(const unordered_map<int, double>& idToRank)
 void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses, int desiredCityCount, UIElement& matcher)
 {
     // keys in aspectsMap: populationMax, elevationMax, timeZone, state
-    /*for (auto a : aspectsMap)
-    {
-        cout << a.first << a.second << endl;
-    }*/
 
     unordered_map<int, double> idToRank;
 
@@ -360,6 +351,7 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
                     }
                 }
             }
+                    //checks if elevationMax matches the user's response and if the city's range contains that value
             else if (attribute.first == "elevationMax") {
                 if (stoi(userResponses[attribute.first]) >= stoi(cityAttributes[attribute.first])){
                     int userTemp = stoi(userResponses[attribute.first]);
@@ -415,29 +407,14 @@ void nonGreedyScoring(unordered_map<int, City>& cities, unordered_map<string, in
 void greedyScoring(unordered_map<int, City>& cities, unordered_map<string, int>& aspectsMap, unordered_map<string, string>& userResponses, int desiredCityCount, UIElement& matcher)
 {
 
-    // Create unordered map of cities called validCities initialized to cities
-    //
-    // Order the preferences from highest importance to lowest importance
-    //
-    // For each preference in that order
-    //      For each city
-    //          If the corresponding attribute does not match the user's response
-    //              Remove that city from validCities
-    //
-    //
-    //
-    // Print out resulting cities in validCities
-
-
     unordered_map<int, City> validCities = cities;
     unordered_set<string> times;
-
+//helper to find time zone for each city
     for(auto element : validCities){
         times.insert(element.second.getTimeZone());
     }
 
     string orderedPreferences[4];
-    //orderedPreferences.reserve(aspectsMap.size());
     for (auto e : aspectsMap)
     {
         orderedPreferences[e.second - 1] = e.first;
