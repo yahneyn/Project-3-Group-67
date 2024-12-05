@@ -607,6 +607,6 @@ int main() {
 
     }
 
-    cout << "\nThank you for using Dream-City Match! Goodbye!" << endl;
+    cout << "\nThank you for using Dream-City Match! Goodbye!";
 
 }
