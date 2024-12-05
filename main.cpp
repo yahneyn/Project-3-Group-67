@@ -607,7 +607,6 @@ int main() {
         cout << "3. Exit" << endl;
         cin >> userSelect;
         userSelect = matcher.validateSelection(userSelect, 1, 3);
-
     }
 
     cout << "Thank you for using Dream-City Match! Goodbye!" << endl;
