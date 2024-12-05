@@ -30,6 +30,7 @@
 
 
 # UNCOMMENT CODE BELOW IF YOU ARE USING A WINDOWS DEVICE
+
 #cmake_minimum_required(VERSION 3.27.8)
 #project(Project_3_Group_67)
 #
